@@ -36,7 +36,7 @@ import skimage.draw
 #import tensorflow as tf
 
 # Root directory of the project
-ROOT_DIR = os.path.abspath("/home/idies/workspace/Storage/ncarey/persistent/PARADIM/furnace_ml/Mask_RCNN")
+ROOT_DIR = os.path.abspath("/home/idies/workspace/Storage/ncarey/persistent/furnace_ml_summer_school/Mask_RCNN")
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
@@ -75,10 +75,10 @@ class ParadimConfig(Config):
     IMAGES_PER_GPU = 1
 
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 1 + 1 + 1# Background + goodMelt + fastTop + fastBottom
+    NUM_CLASSES = 1 + 1 + 1# Background + goodMelt + fastTop + fastBottom
 
     # Number of training steps per epoch
-    STEPS_PER_EPOCH = 100
+    STEPS_PER_EPOCH = 80
     VALIDATION_STEPS = 5
     
     
@@ -131,8 +131,7 @@ class ParadimDataset(utils.Dataset):
         """
         # Add classes. We have only one class to add.
         self.add_class("paradim", 1, "goodMelt")
-        self.add_class("paradim", 2, "fastBottom")
-        self.add_class("paradim", 3, "fastTop")
+        self.add_class("paradim", 2, "pulledMelt") 
         
         # Train or validation dataset?
         assert subset in ["train", "val", "current"]
@@ -144,10 +143,8 @@ class ParadimDataset(utils.Dataset):
             current_class=0
             if classdir == "goodMelt":
                 current_class = 1
-            elif classdir == "fastBottom":
+            elif classdir == "pulledMelt":
                 current_class = 2
-            elif classdir == "fastTop":
-                current_class = 3
             else:
                 print("error: dataset class directory not recognized")
                 continue
@@ -231,7 +228,7 @@ def train(model):
     print("Training network heads")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE,
-                epochs=20,
+                epochs=10,
                 layers='heads')
 
 
